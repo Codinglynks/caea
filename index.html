@@ -1,0 +1,56 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CAEA</title>
+  <link rel="stylesheet" href="css/style.css">
+  <meta name="description" content="">
+
+  <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
+  <meta property="og:image:alt" content="">
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.png">
+
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#fafafa">
+  <script src="https://accounts.google.com/gsi/client" async></script>
+  <script>       function handleCredentialResponse(response) {
+                console.log("Encoded JWT ID token: " + response.credential);
+                xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("POST", "auth.php", true);
+                xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xmlhttp.send("token=" + response.credential);
+
+  }
+  </script>
+</head>
+
+<body>
+
+  <!-- Add your site or application content here -->
+  <h1>Ceci est le site web du CAEA. !!</h1>
+  <img src="img/logo_ea.png" alt="Logo de l'école alsacienne" width="200">
+  <script src="js/app.js"></script>
+  <div
+    id="g_id_onload"
+    data-auto_prompt="true"
+    data-callback="handleCredentialResponse"
+    data-client_id="196751137283-vg0urefv51ntaokjckck5qjki6lk966d.apps.googleusercontent.com"
+    data-use_fedcm_for_button="true"
+    data-hd="ecole-alsacienne.org"
+    data-button_auto_select="true"
+    data-itp_support="true"
+    data-auto_select="true"
+  ></div>
+  <div class="g_id_signin"></div>
+
+</body>
+
+</html>
