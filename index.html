@@ -22,12 +22,15 @@
   <meta name="theme-color" content="#fafafa">
   <script src="https://accounts.google.com/gsi/client" async></script>
   <script>       function handleCredentialResponse(response) {
-    console.log("Encoded JWT ID token: " + response.credential);
-    xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("POST", "auth.php", true);
-    xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xmlhttp.send("token=" + response.credential);
-
+    const token = response.credential
+    console.log("Encoded JWT ID token: " + token);
+    fetch('api/auth.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+        body: JSON.stringify({ token: token })
+    })
   }
   </script>
 </head>
