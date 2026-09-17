@@ -4,8 +4,6 @@ $WEB_CLIENT_ID = '196751137283-vg0urefv51ntaokjckck5qjki6lk966d.apps.googleuserc
 // Get $id_token via HTTPS POST.
 header('Content-Type: application/json');
 
-$WEB_CLIENT_ID = '196751137283-vg0urefv51ntaokjckck5qjki6lk966d.apps.googleusercontent.com';
-
 // Read JSON input or fallback to standard form POST data
 $input = json_decode(file_get_contents('php://input'), true);
 $id_token = $input['token'] ?? $_POST['token'] ?? null;
