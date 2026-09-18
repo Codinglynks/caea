@@ -21,17 +21,32 @@
   <link rel="manifest" href="site.webmanifest">
   <meta name="theme-color" content="#fafafa">
   <script src="https://accounts.google.com/gsi/client" async></script>
-  <script>       function handleCredentialResponse(response) {
-    const token = response.credential
-    console.log("Encoded JWT ID token: " + token);
-    fetch('auth.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-        body: JSON.stringify({ token: token })
-    })
-  }
+  <script>
+    async function handleCredentialResponse(response) {
+      const token = response.credential;
+      console.log("Encoded JWT ID token: " + token);
+
+      try {
+        const res = await fetch('auth.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ token: token })
+        });
+
+        if (!res.ok) {
+          throw new Error(`Server error: ${res.status}`);
+        }
+
+        // Use res.text() if auth.php echoes plain text/HTML
+        const responseData = await res.text();
+        console.log("Response from auth.php:", responseData);
+
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    }
   </script>
   <script type="module">
 import Shake from 'https://cdn.jsdelivr.net/npm/@shakebugs/browser@latest/+esm'
