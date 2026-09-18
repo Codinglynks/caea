@@ -3,7 +3,7 @@ require 'vendor/autoload.php';
 $WEB_CLIENT_ID = '196751137283-vg0urefv51ntaokjckck5qjki6lk966d.apps.googleusercontent.com';
 // Get $id_token via HTTPS POST.
 header('Content-Type: application/json');
-
+/*
 // Read JSON input or fallback to standard form POST data
 $input = json_decode(file_get_contents('php://input'), true);
 $id_token = $input['token'] ?? $_POST['token'] ?? null;
@@ -23,6 +23,11 @@ if ($payload) {
     // If the request specified a Google Workspace domain
     //$domain = $payload['hd'];
 } else {
-    // Invalid ID token
+    http_response_code(401);
+    echo json_encode(['error' => 'Invalid ID token']);
+    exit;
 }
 
+*/
+
+echo json_encode(['message' => 'request received']);
