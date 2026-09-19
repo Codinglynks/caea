@@ -76,7 +76,11 @@ window.Shake = Shake;
   
 <script type="module">
 window.Shake.start('BCbayASvNODiJTmOGqQjs23RUnVl4bvQDlFFFrwMs6hrpXAo3PHcLFq');
+Shake.config.floatingButtonEnabled = false;
+Shake.config.defaultScreen = ShakeScreen.HOME_SCREEN;
 </script>
+
+<button id="help" onclick="Shake.show();">Help</button>
 </body>
 
 </html>
