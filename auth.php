@@ -19,9 +19,6 @@ if ($payload) {
     // This ID is unique to each Google Account, making it suitable for use as a primary key
     // during account lookup. Email is not a good choice because it can be changed by the user.
     echo json_encode(['message' => 'ID token is valid', 'email' => $payload['email']]);
-    $file = fopen("test.csv","r");
-    print_r(fgetcsv($file));
-    fclose($file);
     // If the request specified a Google Workspace domain
     //$domain = $payload['hd'];
 } else {
