@@ -17,12 +17,22 @@ if (!$id_token) {
 $client = new Google_Client(['client_id' => $WEB_CLIENT_ID]);  // Specify the WEB_CLIENT_ID of the app that accesses the backend
 $payload = $client->verifyIdToken($id_token);
 if ($payload) {
-    if (!$payload || $payload['hd'] !== $domains) {
+    /*if (!$payload || $payload['hd'] !== $domains) {
         http_response_code(403);
-        echo json_encode(['error' => 'Acces denied: Invalid domain']);
+        echo json_encode(['error' => 'Access denied: Invalid domain']);
         exit;
-    }
+    }*/
     echo json_encode(['message' => 'ID token is valid', 'email' => $payload['email']]);
+    $handle = fopen("customers-100.csv", "r");
+    if (!$handle) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Unable to open the database, this is on our side']);
+    }
+    else {
+
+    }
+
+
 
     // If the request specified a Google Workspace domain
     //$domain = $pa
