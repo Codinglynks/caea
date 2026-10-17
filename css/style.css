@@ -84,6 +84,204 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+/*
+ * CAEA site styles. Everything above this section and below it is the
+ * HTML5 Boilerplate (already commented by its authors). The classes used
+ * here match the elements in index.html.
+ */
+
+/* Colour palette and sizes, defined once and reused below with var(--name). */
+:root {
+  --bg: #f3f5f9;            /* Page background (very light grey-blue). */
+  --card: #ffffff;          /* Card background (white). */
+  --text: #1d2433;          /* Main text colour (almost black). */
+  --muted: #5b6475;         /* Secondary text colour (grey). */
+  --primary: #1f3a5f;       /* School navy: header, main button, links. */
+  --primary-soft: #e8eef7;  /* Light navy: button hover, spinner track. */
+  --border: #e1e5ec;        /* Thin borders around the card and buttons. */
+  --ok: #1e7b4f;            /* Success title text (green). */
+  --ok-soft: #e6f4ec;       /* Success box background (light green). */
+  --warn: #8a5a00;          /* Warning title text (brown/amber). */
+  --warn-soft: #fdf3e0;     /* Warning box background (light yellow). */
+  --err: #b42318;           /* Error title text (red). */
+  --err-soft: #fdecea;      /* Error box background (light red). */
+  --radius: 14px;           /* Corner rounding of the card. */
+}
+
+/* Width and height include padding and border, which makes sizes predictable. */
+* { box-sizing: border-box; }
+
+/* Whole page. */
+body {
+  margin: 0;                /* Remove the browser's default margin around the page. */
+  min-height: 100vh;        /* At least the full screen height… */
+  display: flex;            /* …laid out as a column (header, main, footer) */
+  flex-direction: column;   /* …so the footer is pushed to the bottom (see main's flex: 1). */
+  background: var(--bg);    /* Light grey-blue background. */
+  color: var(--text);       /* Default text colour. */
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* The device's own system font. */
+}
+
+/* Navy top bar. */
+header {
+  background: var(--primary); /* Navy background. */
+  color: #fff;                /* White text. */
+  padding: 14px 20px;         /* Space inside: 14px top/bottom, 20px left/right. */
+}
+
+/* Content of the top bar. */
+.header-inner {
+  max-width: 960px;         /* Don't stretch wider than 960px on big screens… */
+  margin: 0 auto;           /* …and centre it. */
+  display: flex;            /* Logo and text side by side… */
+  align-items: center;      /* …vertically centred… */
+  gap: 14px;                /* …with 14px between them. */
+}
+
+/* School logo in the top bar. */
+.header-inner img {
+  height: 44px;             /* Fixed height… */
+  width: auto;              /* …width follows to keep the proportions. */
+  background: #fff;         /* White tile behind the logo so it stays readable on navy. */
+  border-radius: 8px;       /* Rounded corners on that tile. */
+  padding: 4px;             /* Small white margin around the logo. */
+}
+
+/* "CAEA": large and bold, letters slightly spaced out. */
+.header-inner .brand { font-size: 1.25rem; font-weight: 700; letter-spacing: .02em; }
+/* "École Alsacienne": smaller and slightly transparent. */
+.header-inner .sub { font-size: .85rem; opacity: .8; }
+
+/* Middle area holding the card. */
+main {
+  flex: 1;                  /* Take all remaining height (keeps the footer at the bottom). */
+  display: flex;            /* Flex layout to place the card… */
+  align-items: flex-start;  /* …at the top… */
+  justify-content: center;  /* …and centred horizontally. */
+  padding: 48px 16px;       /* 48px above/below, 16px on the sides (phones). */
+}
+
+/* White card. */
+.card {
+  width: 100%;              /* Full width on small screens… */
+  max-width: 460px;         /* …but never wider than 460px. */
+  background: var(--card);  /* White. */
+  border: 1px solid var(--border);              /* Thin light border. */
+  border-radius: var(--radius);                 /* Rounded corners. */
+  box-shadow: 0 6px 24px rgba(20, 30, 50, .06); /* Very soft shadow underneath. */
+  padding: 32px 28px;       /* Space inside the card. */
+  text-align: center;       /* Centred text. */
+}
+
+/* Card heading: no top margin, small space below, 1.5× the normal size. */
+.card h1 { margin: 0 0 8px; font-size: 1.5rem; }
+/* Sentence under the heading: space below, grey. */
+.card p.lead { margin: 0 0 24px; color: var(--muted); }
+
+/* Box around the Google button. */
+.signin-wrap {
+  display: flex;            /* Flex layout… */
+  justify-content: center;  /* …to centre the button. */
+  min-height: 44px;         /* Reserve the button's height so the page doesn't jump when it loads. */
+}
+
+/* Loading state */
+/* Spinner + text while waiting for the server. */
+.loading {
+  display: flex;            /* Flex layout… */
+  flex-direction: column;   /* …stacked vertically… */
+  align-items: center;      /* …and centred. */
+  gap: 12px;                /* Space between spinner and text. */
+  color: var(--muted);      /* Grey text. */
+  padding: 12px 0;          /* A little space above and below. */
+}
+
+/* Spinning circle. */
+.spinner {
+  width: 32px;              /* Size… */
+  height: 32px;             /* …32×32px. */
+  border: 3px solid var(--primary-soft); /* Light ring… */
+  border-top-color: var(--primary);      /* …with one navy section… */
+  border-radius: 50%;       /* …made round… */
+  animation: spin .8s linear infinite;   /* …turning once every 0.8s, forever. */
+}
+
+/* The "spin" animation: one full turn. */
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Result state */
+/* Coloured box with the server's answer. */
+.result {
+  text-align: left;         /* Left-aligned text inside the box. */
+  border-radius: 10px;      /* Rounded corners. */
+  padding: 16px 18px;       /* Space inside. */
+  margin-bottom: 20px;      /* Space before the buttons. */
+  border: 1px solid transparent; /* Border whose colour is set by ok/warn/err below. */
+}
+
+/* Green box (success). */
+.result.ok   { background: var(--ok-soft);   border-color: #bfe3cf; }
+/* Yellow box (access denied / not found). */
+.result.warn { background: var(--warn-soft); border-color: #f2dcae; }
+/* Red box (error). */
+.result.err  { background: var(--err-soft);  border-color: #f5c2bd; }
+
+/* Bold first line of the box. */
+.result .title { font-weight: 700; margin-bottom: 6px; }
+/* Title colour matching the box: green… */
+.result.ok .title   { color: var(--ok); }
+/* …amber… */
+.result.warn .title { color: var(--warn); }
+/* …or red. */
+.result.err .title  { color: var(--err); }
+
+/* One "label + value" line; long emails/URLs wrap instead of overflowing. */
+.result .row { margin-top: 8px; font-size: .95rem; word-break: break-word; }
+/* Small grey capitalised label ("COMPTE", "SITE WEB") on its own line. */
+.result .label { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; display: block; }
+/* Website link: navy and semi-bold. */
+.result a { color: var(--primary); font-weight: 600; }
+
+/* Shared look of all buttons (Réessayer, Se déconnecter, Aide). */
+.btn {
+  appearance: none;         /* Remove the browser's default button style. */
+  border: 1px solid var(--border); /* Thin light border. */
+  background: #fff;         /* White background. */
+  color: var(--text);       /* Dark text. */
+  font: inherit;            /* Same font as the page… */
+  font-size: .95rem;        /* …slightly smaller. */
+  padding: 9px 16px;        /* Space inside the button. */
+  border-radius: 999px;     /* Fully rounded "pill" shape. */
+  cursor: pointer;          /* Hand cursor on hover. */
+  transition: background .15s, border-color .15s; /* Smooth colour change on hover. */
+}
+
+/* Button on hover: light navy. */
+.btn:hover { background: var(--primary-soft); border-color: #c9d5e8; }
+/* Main button (Réessayer): navy with white text. */
+.btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+/* Main button on hover: slightly lighter navy. */
+.btn.primary:hover { background: #2a4d7c; }
+
+/* Row of buttons: side by side, centred, 10px apart, wrapping on narrow screens. */
+.actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* Footer at the bottom. */
+footer {
+  text-align: center;       /* Centred. */
+  color: var(--muted);      /* Grey. */
+  font-size: .85rem;        /* Small text. */
+  padding: 20px 16px 28px;  /* Space around it (top, sides, bottom). */
+}
+
+/* "Aide" button pinned to the bottom-right corner of the screen. */
+#help {
+  position: fixed;          /* Stays in place when scrolling. */
+  right: 16px;              /* 16px from the right edge… */
+  bottom: 16px;             /* …and 16px from the bottom. */
+  box-shadow: 0 4px 14px rgba(20, 30, 50, .12); /* Shadow so it floats above the page. */
+}
+
 /* ==========================================================================
    Helper classes
    ========================================================================== */
