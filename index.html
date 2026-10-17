@@ -1,12 +1,12 @@
 <!doctype html>
-<html class="no-js" lang="">
+<html class="no-js" lang="fr">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CAEA</title>
   <link rel="stylesheet" href="css/style.css">
-  <meta name="description" content="">
+  <meta name="description" content="Résultats du CAEA – École Alsacienne">
 
   <meta property="og:title" content="">
   <meta property="og:type" content="">
@@ -19,35 +19,171 @@
   <link rel="apple-touch-icon" href="icon.png">
 
   <link rel="manifest" href="site.webmanifest">
-  <meta name="theme-color" content="#fafafa">
-  <script src="https://accounts.google.com/gsi/client" async></script>
-  <script>
-    async function handleCredentialResponse(response) {
-      const token = response.credential;
-      console.log("Encoded JWT ID token: " + token);
+  <meta name="theme-color" content="#1f3a5f">
 
-      try {
-        const res = await fetch('auth.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ token: token })
-        });
-
-        if (!res.ok) {
-          throw new Error(`Server error: ${res.status}`);
-        }
-
-        // Use res.text() if auth.php echoes plain text/HTML
-        const responseData = await res.text();
-        console.log("Response from auth.php:", responseData);
-
-      } catch (error) {
-        console.error("Fetch error:", error);
-      }
+  <style>
+    :root {
+      --bg: #f3f5f9;
+      --card: #ffffff;
+      --text: #1d2433;
+      --muted: #5b6475;
+      --primary: #1f3a5f;
+      --primary-soft: #e8eef7;
+      --border: #e1e5ec;
+      --ok: #1e7b4f;
+      --ok-soft: #e6f4ec;
+      --warn: #8a5a00;
+      --warn-soft: #fdf3e0;
+      --err: #b42318;
+      --err-soft: #fdecea;
+      --radius: 14px;
     }
-  </script>
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 14px 20px;
+    }
+
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-inner img {
+      height: 44px;
+      width: auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 4px;
+    }
+
+    .header-inner .brand { font-size: 1.25rem; font-weight: 700; letter-spacing: .02em; }
+    .header-inner .sub { font-size: .85rem; opacity: .8; }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 48px 16px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 460px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 6px 24px rgba(20, 30, 50, .06);
+      padding: 32px 28px;
+      text-align: center;
+    }
+
+    .card h1 { margin: 0 0 8px; font-size: 1.5rem; }
+    .card p.lead { margin: 0 0 24px; color: var(--muted); }
+
+    .signin-wrap {
+      display: flex;
+      justify-content: center;
+      min-height: 44px;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Loading state */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      padding: 12px 0;
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--primary-soft);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Result state */
+    .result {
+      text-align: left;
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 20px;
+      border: 1px solid transparent;
+    }
+
+    .result.ok   { background: var(--ok-soft);   border-color: #bfe3cf; }
+    .result.warn { background: var(--warn-soft); border-color: #f2dcae; }
+    .result.err  { background: var(--err-soft);  border-color: #f5c2bd; }
+
+    .result .title { font-weight: 700; margin-bottom: 6px; }
+    .result.ok .title   { color: var(--ok); }
+    .result.warn .title { color: var(--warn); }
+    .result.err .title  { color: var(--err); }
+
+    .result .row { margin-top: 8px; font-size: .95rem; word-break: break-word; }
+    .result .label { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; display: block; }
+    .result a { color: var(--primary); font-weight: 600; }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      font-size: .95rem;
+      padding: 9px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+
+    .btn:hover { background: var(--primary-soft); border-color: #c9d5e8; }
+    .btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .btn.primary:hover { background: #2a4d7c; }
+
+    .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: .85rem;
+      padding: 20px 16px 28px;
+    }
+
+    #help {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      box-shadow: 0 4px 14px rgba(20, 30, 50, .12);
+    }
+  </style>
+
+  <script src="https://accounts.google.com/gsi/client" async></script>
   <script type="module">
 import Shake from 'https://cdn.jsdelivr.net/npm/@shakebugs/browser@latest/+esm'
 window.Shake = Shake;
@@ -56,30 +192,208 @@ window.Shake = Shake;
 
 <body>
 
-<!-- Add your site or application content here -->
-<h1>Ceci est le site web du CAEA !!</h1>
-<img src="img/logo_ea.png" alt="Logo de l'école alsacienne" width="200">
-<script src="js/app.js"></script>
+<header>
+  <div class="header-inner">
+    <img src="img/logo_ea.png" alt="Logo de l'École Alsacienne">
+    <div>
+      <div class="brand">CAEA</div>
+      <div class="sub">École Alsacienne</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+
+    <!-- Step 1: sign in -->
+    <div id="view-signin">
+      <h1>Bienvenue sur le site du CAEA</h1>
+      <p class="lead">Connectez-vous avec votre compte de l'école pour consulter vos résultats.</p>
+      <div class="signin-wrap">
+        <div
+          class="g_id_signin"
+          data-type="standard"
+          data-theme="outline"
+          data-size="large"
+          data-text="signin_with"
+          data-shape="pill"
+          data-locale="fr"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Step 2: waiting for auth.php -->
+    <div id="view-loading" class="hidden">
+      <div class="loading">
+        <div class="spinner" aria-hidden="true"></div>
+        <div>Vérification en cours…</div>
+      </div>
+    </div>
+
+    <!-- Step 3: server response -->
+    <div id="view-result" class="hidden">
+      <div id="result-box" class="result" role="status" aria-live="polite"></div>
+      <div class="actions">
+        <button id="btn-retry" class="btn primary hidden" type="button">Réessayer</button>
+        <button id="btn-signout" class="btn" type="button">Se déconnecter</button>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<footer>© CAEA – École Alsacienne</footer>
+
 <div
   id="g_id_onload"
   data-auto_prompt="false"
   data-callback="handleCredentialResponse"
   data-client_id="196751137283-vg0urefv51ntaokjckck5qjki6lk966d.apps.googleusercontent.com"
   data-use_fedcm_for_button="true"
-
   data-button_auto_select="true"
   data-itp_support="true"
   data-auto_select="true"
 ></div>
-<div class="g_id_signin"></div>
-<button id="nothing" onclick="handleCredentialResponse({credential: 'test'})">Nothing</button>
-  
+
+<button id="help" class="btn" type="button" onclick="Shake.show();">Aide</button>
+
+<script src="js/app.js"></script>
+<script>
+  const views = {
+    signin: document.getElementById('view-signin'),
+    loading: document.getElementById('view-loading'),
+    result: document.getElementById('view-result')
+  };
+  const resultBox = document.getElementById('result-box');
+  const btnRetry = document.getElementById('btn-retry');
+  const btnSignout = document.getElementById('btn-signout');
+
+  let lastToken = null;
+
+  function show(name) {
+    for (const key in views) {
+      views[key].classList.toggle('hidden', key !== name);
+    }
+  }
+
+  // Builds a DOM element with text content (never innerHTML with server data)
+  function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function row(label, valueNode) {
+    const r = el('div', 'row');
+    r.appendChild(el('span', 'label', label));
+    r.appendChild(valueNode);
+    return r;
+  }
+
+  function renderResult(kind, title, message, details) {
+    resultBox.className = 'result ' + kind;
+    resultBox.replaceChildren(el('div', 'title', title));
+    if (message) resultBox.appendChild(el('div', '', message));
+
+    if (details && details.email) {
+      resultBox.appendChild(row('Compte', el('span', '', details.email)));
+    }
+
+    if (details && details.website) {
+      let valueNode;
+      // Only make a link if it's a real http(s) URL
+      if (/^https?:\/\//i.test(details.website)) {
+        valueNode = el('a', '', details.website);
+        valueNode.href = details.website;
+        valueNode.target = '_blank';
+        valueNode.rel = 'noopener noreferrer';
+      } else {
+        valueNode = el('span', '', details.website);
+      }
+      resultBox.appendChild(row('Site web', valueNode));
+    }
+
+    // Retry makes sense for network / server errors only
+    btnRetry.classList.toggle('hidden', kind !== 'err' || !lastToken);
+    show('result');
+  }
+
+  async function sendToken(token) {
+    show('loading');
+
+    let res;
+    try {
+      res = await fetch('auth.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: token })
+      });
+    } catch (error) {
+      console.error('Fetch error:', error);
+      renderResult('err', 'Connexion impossible',
+        'Le serveur ne répond pas. Vérifiez votre connexion internet puis réessayez.');
+      return;
+    }
+
+    // auth.php normally answers JSON, but may return an empty body on a crash
+    let data = {};
+    try {
+      data = await res.json();
+    } catch (e) {
+      data = {};
+    }
+
+    if (res.ok && data.status === 'success') {
+      lastToken = null;
+      renderResult('ok', 'Connexion réussie', null, data);
+      return;
+    }
+
+    switch (res.status) {
+      case 400:
+      case 401:
+        lastToken = null; // same token would fail again
+        renderResult('err', 'Session invalide',
+          'Votre connexion Google n\'a pas pu être vérifiée. Veuillez vous reconnecter.');
+        break;
+      case 403:
+        renderResult('warn', 'Accès refusé',
+          'Veuillez utiliser votre adresse @ecole-alsacienne.org.', data);
+        break;
+      case 404:
+        renderResult('warn', 'Aucun résultat',
+          'Aucune information n\'a été trouvée pour ce compte.', data);
+        break;
+      default:
+        renderResult('err', 'Erreur du serveur',
+          data.error || ('Une erreur inattendue est survenue (code ' + res.status + ').'));
+    }
+  }
+
+  // Called by Google Identity Services after sign-in
+  function handleCredentialResponse(response) {
+    lastToken = response.credential;
+    sendToken(lastToken);
+  }
+
+  btnRetry.addEventListener('click', function () {
+    if (lastToken) sendToken(lastToken);
+  });
+
+  btnSignout.addEventListener('click', function () {
+    lastToken = null;
+    if (window.google && google.accounts && google.accounts.id) {
+      google.accounts.id.disableAutoSelect();
+    }
+    show('signin');
+  });
+</script>
+
 <script type="module">
 window.Shake.start('BCbayASvNODiJTmOGqQjs23RUnVl4bvQDlFFFrwMs6hrpXAo3PHcLFq');
 Shake.config.floatingButtonEnabled = false;
 </script>
-
-<button id="help" onclick="Shake.show();">Help</button>
 </body>
 
 </html>
