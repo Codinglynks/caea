@@ -1,0 +1,76 @@
+# Deploys the site to InfinityFree (/htdocs/) over FTP on every push to main.
+#
+# Required repository secrets (Settings → Secrets and variables → Actions):
+#   FTP_SERVER    InfinityFree FTP hostname (e.g. ftpupload.net)
+#   FTP_USERNAME  InfinityFree FTP username (e.g. if0_12345678)
+#   FTP_PASSWORD  InfinityFree FTP password (= the hosting account password)
+
+name: Deploy to InfinityFree
+
+on:
+  push:
+    branches: [main]
+  # Lets you re-run a deployment by hand from the Actions tab.
+  workflow_dispatch:
+
+# Never run two uploads to the same server at the same time.
+concurrency:
+  group: deploy-infinityfree
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Hard ceiling for the whole job: InfinityFree's FTP can be slow or hang.
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # auth.php needs vendor/ (google/apiclient), which is not in git.
+      # composer.json trims google/apiclient-services down to Oauth2 so that
+      # vendor/ stays around 1,000 files instead of ~38,000.
+      - name: Install PHP dependencies
+        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress
+
+      - name: Upload over FTP
+        id: ftp
+        # Let the retry step below take over if the connection drops.
+        continue-on-error: true
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with: &ftp
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
+          local-dir: ./
+          server-dir: /htdocs/
+          # Per-operation FTP timeout in milliseconds (default is 30000).
+          timeout: 120000
+          log-level: standard
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/node_modules/**
+            **/.env
+            **/.env.*
+            **/.idea/**
+            **/.vscode/**
+            **/.DS_Store
+            README.md
+            DOCUMENTATION.md
+            LICENSE
+            composer.json
+            composer.lock
+            **/vendor/**/tests/**
+            **/vendor/**/docs/**
+            **/vendor/google/apiclient-services/generator/**
+
+      # One retry: only files that are still different get re-uploaded.
+      - name: Retry FTP upload
+        if: steps.ftp.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with: *ftp
