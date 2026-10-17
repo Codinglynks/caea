@@ -167,6 +167,17 @@ composer install        # creates the vendor/ folder with google/apiclient
 Upload the whole folder, **including `vendor/`**, to the server, or run
 `composer install` directly on the server.
 
+`composer.json` tells Composer to keep only the `Oauth2` service of
+`google/apiclient-services` (the token check needs none of the others), which
+shrinks `vendor/` from about 38,000 files to about 1,000.
+
+### 5.2.1 Automatic deployment (InfinityFree)
+
+`.github/workflows/deploy.yml` runs on every push to `main`: it runs
+`composer install --no-dev`, then uploads the site to `/htdocs/` over FTP
+(git files, docs, `composer.*` and `.env` files are left out). It needs three
+repository secrets: `FTP_SERVER`, `FTP_USERNAME` and `FTP_PASSWORD`.
+
 ### 5.3 Google Cloud configuration
 
 The client ID `196751137283-…apps.googleusercontent.com` appears in **two
