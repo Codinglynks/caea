@@ -40,13 +40,6 @@
   <!-- Google Identity Services library: draws the "Sign in with Google" button and handles the sign-in.
        async = downloaded without blocking the rest of the page. -->
   <script src="https://accounts.google.com/gsi/client" async></script>
-  <!-- Loads the Shake library (bug reports / help widget) as a JavaScript module. -->
-  <script type="module">
-// Import Shake from the jsDelivr CDN (latest version).
-import Shake from 'https://cdn.jsdelivr.net/npm/@shakebugs/browser@latest/+esm'
-// Make Shake available to the rest of the page (the "Aide" button and the start script at the bottom).
-window.Shake = Shake;
-</script>
 </head>
 
 <body>
@@ -145,10 +138,6 @@ window.Shake = Shake;
   data-itp_support="true"
   data-auto_select="true"
 ></div>
-
-<!-- "Help" button fixed in the bottom-right corner; opens the Shake help/bug-report window. -->
-<button id="help" class="btn" type="button" onclick="Shake.show();">Aide</button>
-
 <!-- Extra site script (currently empty, kept for future code). -->
 <script src="js/app.js"></script>
 <!-- Page logic: shows the right view and displays auth.php's response. -->
@@ -224,26 +213,12 @@ window.Shake = Shake;
     if (details && details.website) {
       // Element that will hold the website (a link or plain text).
       let valueNode;
-      // Only make a link if it's a real http(s) URL
-      // (blocks dangerous links such as "javascript:…" coming from the CSV).
-      if (/^https?:\/\//i.test(details.website)) {
-        // Create a link showing the address.
-        valueNode = el('a', '', details.website);
-        // Where the link goes.
-        valueNode.href = details.website;
-        // Open it in a new tab.
-        valueNode.target = '_blank';
-        // Security: the new tab can't control this page or see where it came from.
-        valueNode.rel = 'noopener noreferrer';
-      // Not a web address (e.g. "Non renseigné"):
-      } else {
         // show it as plain text.
         valueNode = el('span', '', details.website);
       }
       // Add the "Site web" line to the box.
       resultBox.appendChild(row('Site web', valueNode));
     }
-
     // Retry makes sense for network / server errors only
     // Hide the button unless it's a red error AND there's a token to resend.
     btnRetry.classList.toggle('hidden', kind !== 'err' || !lastToken);
@@ -364,14 +339,6 @@ window.Shake = Shake;
   });
 </script>
 
-<!-- Starts Shake once its module (imported in <head>) has loaded. -->
-<script type="module">
-// Start Shake with this site's Shake API key.
-window.Shake.start('BCbayASvNODiJTmOGqQjs23RUnVl4bvQDlFFFrwMs6hrpXAo3PHcLFq');
-// Hide Shake's own floating button; our "Aide" button is used instead.
-Shake.config.floatingButtonEnabled = false;
-Shake.config.defaultScreen = ShakeScreen.HOME_SCREEN;
-</script>
 </body>
 
 </html>
