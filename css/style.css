@@ -96,9 +96,8 @@ textarea {
   --card: #ffffff;          /* Card background (white). */
   --text: #1d2433;          /* Main text colour (almost black). */
   --muted: #5b6475;         /* Secondary text colour (grey). */
-  --primary: #1f3a5f;       /* School navy: header, main button, links. */
+  --primary: #bf1b1b;       /* School navy: header, main button, links. */
   --primary-soft: #e8eef7;  /* Light navy: button hover, spinner track. */
-  --border: #e1e5ec;        /* Thin borders around the card and buttons. */
   --ok: #1e7b4f;            /* Success title text (green). */
   --ok-soft: #e6f4ec;       /* Success box background (light green). */
   --warn: #8a5a00;          /* Warning title text (brown/amber). */
