@@ -1,344 +1,85 @@
 <!doctype html>
-<!-- index.html: the CAEA website. The user signs in with Google, the token is sent to
-     auth.php, and the server's answer is displayed on the page. See DOCUMENTATION.md. -->
-<!-- lang="fr": the page is in French (helps screen readers and translation tools).
-     class="no-js" is an HTML5 Boilerplate leftover, unused by this site. -->
-<html class="no-js" lang="fr">
+<html class="no-js" lang="">
 
 <head>
-  <!-- Text encoding of the page (needed for accents like é, è, à). -->
   <meta charset="utf-8">
-  <!-- Makes the page fit the screen width on phones instead of showing a zoomed-out desktop page. -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Title shown in the browser tab. -->
   <title>CAEA</title>
-  <!-- All the page's styles (boilerplate + custom CAEA styles). -->
   <link rel="stylesheet" href="css/style.css">
-  <!-- Short description of the page, shown by search engines. -->
-  <meta name="description" content="Résultats du CAEA – École Alsacienne">
+  <meta name="description" content="">
 
-  <!-- Open Graph tags: the preview shown when the link is shared (Facebook, WhatsApp, …). Still empty, fill in if needed. -->
   <meta property="og:title" content="">
   <meta property="og:type" content="">
   <meta property="og:url" content="">
   <meta property="og:image" content="">
   <meta property="og:image:alt" content="">
 
-  <!-- Tab icon for browsers that only support .ico. -->
   <link rel="icon" href="/favicon.ico" sizes="any">
-  <!-- Sharper tab icon (SVG) for modern browsers. -->
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <!-- Icon used when the site is added to an iPhone/iPad home screen. -->
   <link rel="apple-touch-icon" href="icon.png">
 
-  <!-- Web app manifest: name and icon used when the site is "installed" on a phone. -->
   <link rel="manifest" href="site.webmanifest">
-  <!-- Colour of the browser's address bar on mobile (same navy as the header). -->
-  <meta name="theme-color" content="#1f3a5f">
-
-
-  <!-- Google Identity Services library: draws the "Sign in with Google" button and handles the sign-in.
-       async = downloaded without blocking the rest of the page. -->
+  <meta name="theme-color" content="#fafafa">
   <script src="https://accounts.google.com/gsi/client" async></script>
+  <script>
+    async function handleCredentialResponse(response) {
+      const token = response.credential;
+      console.log("Encoded JWT ID token: " + token);
+
+      try {
+        const res = await fetch('auth.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ token: token })
+        });
+
+        if (!res.ok) {
+          throw new Error(`Server error: ${res.status}`);
+        }
+
+        // Use res.text() if auth.php echoes plain text/HTML
+        const responseData = await res.text();
+        console.log("Response from auth.php:", responseData);
+
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    }
+  </script>
+  <script type="module">
+import Shake from 'https://cdn.jsdelivr.net/npm/@shakebugs/browser@latest/+esm'
+window.Shake = Shake;
+</script>
 </head>
 
 <body>
 
-<!-- Top bar: school logo and site name. -->
-<header>
-  <!-- Centres the header content and lines the logo up with the text. -->
-  <div class="header-inner">
-    <!-- School logo; alt text is read aloud by screen readers. -->
-    <img src="img/logo_ea.png" alt="Logo de l'École Alsacienne">
-    <!-- Groups the two text lines next to the logo. -->
-    <div>
-      <!-- Site name, in bold. -->
-      <div class="brand">CAEA</div>
-      <!-- Subtitle, smaller and lighter. -->
-      <div class="sub">École Alsacienne</div>
-    </div>
-  </div>
-</header>
-
-<!-- Main area of the page. -->
-<main>
-  <!-- White card in the middle. It contains three "views"; only one is visible at a time (see show() below). -->
-  <section class="card">
-
-    <!-- Step 1: sign in -->
-    <!-- View shown when the page opens: welcome text and Google button. -->
-    <div id="view-signin">
-      <!-- Main heading. -->
-      <h1>Bienvenue sur le site du CAEA</h1>
-      <!-- Explanation under the heading (grey text). -->
-      <p class="lead">Connectez-vous avec votre compte de l'école pour consulter vos résultats.</p>
-      <!-- Centres the Google button. -->
-      <div class="signin-wrap">
-        <!-- Google draws its button inside this div. The data-* attributes set its look:
-             standard button, white with outline, large, "Se connecter avec Google" text, rounded, in French. -->
-        <div
-          class="g_id_signin"
-          data-type="standard"
-          data-theme="outline"
-          data-size="large"
-          data-text="signin_with"
-          data-shape="pill"
-          data-locale="fr"
-        ></div>
-      </div>
-    </div>
-
-    <!-- Step 2: waiting for auth.php -->
-    <!-- View shown while auth.php is checking the token. Hidden at first ("hidden" class). -->
-    <div id="view-loading" class="hidden">
-      <!-- Stacks the spinner above the text. -->
-      <div class="loading">
-        <!-- Spinning circle (pure CSS). aria-hidden: screen readers skip it, it's only decoration. -->
-        <div class="spinner" aria-hidden="true"></div>
-        <!-- "Checking…" text. -->
-        <div>Vérification en cours…</div>
-      </div>
-    </div>
-
-    <!-- Step 3: server response -->
-    <!-- View shown once auth.php has answered. Hidden at first. -->
-    <div id="view-result" class="hidden">
-      <!-- Coloured box filled in by renderResult(). role="status" + aria-live: screen readers read the new message out loud. -->
-      <div id="result-box" class="result" role="status" aria-live="polite"></div>
-      <!-- Row of buttons under the result. -->
-      <div class="actions">
-        <!-- "Retry" button: only shown after a server or network error. -->
-        <button id="btn-retry" class="btn primary hidden" type="button">Réessayer</button>
-        <!-- "Sign out" button: goes back to step 1. -->
-        <button id="btn-signout" class="btn" type="button">Se déconnecter</button>
-      </div>
-    </div>
-
-  </section>
-</main>
-
-<!-- Footer at the bottom of the page. -->
-<footer>© CAEA – École Alsacienne</footer>
-
-<!-- Google sign-in settings (read by the Google library loaded in <head>):
-     data-auto_prompt="false"        don't pop up the "One Tap" box automatically
-     data-callback                   name of our function called with the token after sign-in
-     data-client_id                  our app's ID in Google Cloud (must match $WEB_CLIENT_ID in auth.php)
-     data-use_fedcm_for_button       use the browser's built-in FedCM sign-in when available
-     data-button_auto_select         sign in straight away when the button is clicked if only one account is available
-     data-itp_support                better support for Safari/iOS tracking protection
-     data-auto_select                automatically sign back in a returning user when possible -->
+<!-- Add your site or application content here -->
+<h1>Ceci est le site web du CAEA !!</h1>
+<img src="img/logo_ea.png" alt="Logo de l'école alsacienne" width="200">
+<script src="js/app.js"></script>
 <div
   id="g_id_onload"
   data-auto_prompt="false"
   data-callback="handleCredentialResponse"
   data-client_id="196751137283-vg0urefv51ntaokjckck5qjki6lk966d.apps.googleusercontent.com"
   data-use_fedcm_for_button="true"
+
   data-button_auto_select="true"
   data-itp_support="true"
   data-auto_select="true"
 ></div>
-<!-- Extra site script (currently empty, kept for future code). -->
-<script src="js/app.js"></script>
-<!-- Page logic: shows the right view and displays auth.php's response. -->
-<script>
-  // The three views of the card, looked up once by their id.
-  const views = {
-    signin: document.getElementById('view-signin'),   // Step 1: sign in.
-    loading: document.getElementById('view-loading'), // Step 2: waiting.
-    result: document.getElementById('view-result')    // Step 3: result.
-  };
-  // The coloured box where the server's answer is written.
-  const resultBox = document.getElementById('result-box');
-  // The "Réessayer" (retry) button.
-  const btnRetry = document.getElementById('btn-retry');
-  // The "Se déconnecter" (sign out) button.
-  const btnSignout = document.getElementById('btn-signout');
-
-  // Last Google token received, kept so "Retry" can send it again. null = nothing to retry.
-  let lastToken = null;
-
-  // Shows the view called `name` ('signin', 'loading' or 'result') and hides the other two.
-  function show(name) {
-    // Go through each view…
-    for (const key in views) {
-      // …and add the "hidden" class to every view except the one asked for.
-      views[key].classList.toggle('hidden', key !== name);
-    }
-  }
-
-  // Builds a DOM element with text content (never innerHTML with server data)
-  // Using textContent means any HTML in the server's data is shown as plain text, never run (prevents XSS).
-  function el(tag, className, text) {
-    // Create the element, e.g. <div> or <span>.
-    const node = document.createElement(tag);
-    // Give it a CSS class if one was passed.
-    if (className) node.className = className;
-    // Put the text inside if some was passed.
-    if (text !== undefined) node.textContent = text;
-    // Hand the finished element back.
-    return node;
-  }
-
-  // Builds one "label + value" line of the result box, e.g. "COMPTE / a@ecole-alsacienne.org".
-  function row(label, valueNode) {
-    // Container for the line.
-    const r = el('div', 'row');
-    // Small grey capitalised label on top.
-    r.appendChild(el('span', 'label', label));
-    // The value under it (a <span> or an <a> link).
-    r.appendChild(valueNode);
-    // Hand the finished line back.
-    return r;
-  }
-
-  // Fills the result box and shows step 3.
-  // kind: 'ok' (green), 'warn' (yellow) or 'err' (red); title: bold first line;
-  // message: optional sentence; details: optional object with email / website from auth.php.
-  function renderResult(kind, title, message, details) {
-    // Set the box colour, e.g. class="result ok".
-    resultBox.className = 'result ' + kind;
-    // Empty the box and put the title in it.
-    resultBox.replaceChildren(el('div', 'title', title));
-    // Add the explanation sentence if there is one.
-    if (message) resultBox.appendChild(el('div', '', message));
-
-    // If the server sent an email…
-    if (details && details.email) {
-      // …add a "Compte" (account) line with it.
-      resultBox.appendChild(row('Compte', el('span', '', details.email)));
-    }
-
-    // If the server sent a website…
-    if (details && details.website) {
-      // Element that will hold the website (a link or plain text).
-      let valueNode;
-        // show it as plain text.
-        valueNode = el('span', '', details.website);
-      }
-      // Add the "Site web" line to the box.
-      resultBox.appendChild(row('Site web', valueNode));
-    }
-    // Retry makes sense for network / server errors only
-    // Hide the button unless it's a red error AND there's a token to resend.
-    btnRetry.classList.toggle('hidden', kind !== 'err' || !lastToken);
-    // Switch to step 3.
-    show('result');
-  }
-
-  // Sends the Google token to auth.php and displays the answer.
-  // async: lets us "await" the server without freezing the page.
-  async function sendToken(token) {
-    // Show the spinner while waiting.
-    show('loading');
-
-    // Will hold the server's response.
-    let res;
-    // fetch can fail completely (no internet, server down), so catch that.
-    try {
-      // Send an HTTP POST request to auth.php…
-      res = await fetch('auth.php', {
-        method: 'POST',                                   // POST = sending data.
-        headers: { 'Content-Type': 'application/json' }, // The body is JSON…
-        body: JSON.stringify({ token: token })            // …that looks like {"token":"…"}.
-      });
-    // The request never reached the server or never came back.
-    } catch (error) {
-      // Log the technical detail in the browser console (F12) for debugging.
-      console.error('Fetch error:', error);
-      // Show a red "can't connect" message, asking the user to check their internet and retry.
-      renderResult('err', 'Connexion impossible',
-        'Le serveur ne répond pas. Vérifiez votre connexion internet puis réessayez.');
-      // Stop here.
-      return;
-    }
-
-    // auth.php normally answers JSON, but may return an empty body on a crash
-    // Will hold the decoded answer; empty object by default.
-    let data = {};
-    // Decoding can fail if the body isn't valid JSON.
-    try {
-      // Turn the JSON text into a JavaScript object.
-      data = await res.json();
-    // Not valid JSON (e.g. empty body or PHP error page)…
-    } catch (e) {
-      // …carry on with an empty object; the status code alone decides the message.
-      data = {};
-    }
-
-    // HTTP 200-299 and auth.php says "success": the user was found.
-    if (res.ok && data.status === 'success') {
-      // Nothing to retry any more.
-      lastToken = null;
-      // Green box "Connexion réussie" with the email and website.
-      renderResult('ok', 'Connexion réussie', null, data);
-      // Stop here.
-      return;
-    }
-
-    // Otherwise, pick a message based on the HTTP status code sent by auth.php.
-    switch (res.status) {
-      // 400 = no token sent…
-      case 400:
-      // …401 = token rejected by Google.
-      case 401:
-        lastToken = null; // same token would fail again
-        // Red box "Session invalide": the Google sign-in couldn't be verified, please sign in again.
-        renderResult('err', 'Session invalide',
-          'Votre connexion Google n\'a pas pu être vérifiée. Veuillez vous reconnecter.');
-        // Leave the switch.
-        break;
-      // 403 = account outside the school's domain.
-      case 403:
-        // Yellow box "Accès refusé": please use an @ecole-alsacienne.org address.
-        renderResult('warn', 'Accès refusé',
-          'Veuillez utiliser votre adresse @ecole-alsacienne.org.', data);
-        // Leave the switch.
-        break;
-      // 404 = email not found in the CSV.
-      case 404:
-        // Yellow box "Aucun résultat": no information found for this account (with the email).
-        renderResult('warn', 'Aucun résultat',
-          'Aucune information n\'a été trouvée pour ce compte.', data);
-        // Leave the switch.
-        break;
-      // Anything else (500, unexpected codes…).
-      default:
-        // Red box "Erreur du serveur" with the server's message, or a generic one with the code.
-        renderResult('err', 'Erreur du serveur',
-          data.error || ('Une erreur inattendue est survenue (code ' + res.status + ').'));
-    }
-  }
-
-  // Called by Google Identity Services after sign-in
-  // (its name is set in data-callback above). response.credential is the signed ID token (a JWT).
-  function handleCredentialResponse(response) {
-    // Remember the token in case the user needs to retry.
-    lastToken = response.credential;
-    // Send it to auth.php.
-    sendToken(lastToken);
-  }
-
-  // When "Réessayer" is clicked…
-  btnRetry.addEventListener('click', function () {
-    // …send the same token again, if there is one.
-    if (lastToken) sendToken(lastToken);
-  });
-
-  // When "Se déconnecter" is clicked…
-  btnSignout.addEventListener('click', function () {
-    // …forget the token…
-    lastToken = null;
-    // …and if the Google library has loaded…
-    if (window.google && google.accounts && google.accounts.id) {
-      // …stop Google from automatically signing the same account back in.
-      google.accounts.id.disableAutoSelect();
-    }
-    // Back to step 1.
-    show('signin');
-  });
+<div class="g_id_signin"></div>
+<button id="nothing" onclick="handleCredentialResponse({credential: 'test'})">Nothing</button>
+  
+<script type="module">
+window.Shake.start('BCbayASvNODiJTmOGqQjs23RUnVl4bvQDlFFFrwMs6hrpXAo3PHcLFq');
+Shake.config.floatingButtonEnabled = false;
 </script>
 
+<button id="help" onclick="Shake.show();">Help</button>
 </body>
 
 </html>
