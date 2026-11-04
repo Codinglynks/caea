@@ -48,10 +48,7 @@
       }
     }
   </script>
-  <script type="module">
-import Shake from 'https://cdn.jsdelivr.net/npm/@shakebugs/browser@latest/+esm'
-window.Shake = Shake;
-</script>
+  
 </head>
 
 <body>
@@ -74,12 +71,9 @@ window.Shake = Shake;
 <div class="g_id_signin"></div>
 <button id="nothing" onclick="handleCredentialResponse({credential: 'test'})">Nothing</button>
   
-<script type="module">
-window.Shake.start('BCbayASvNODiJTmOGqQjs23RUnVl4bvQDlFFFrwMs6hrpXAo3PHcLFq');
-Shake.config.floatingButtonEnabled = false;
-</script>
 
-<button id="help" onclick="Shake.show();">Help</button>
+
+
 </body>
 
 </html>
