@@ -68,14 +68,32 @@
   data-itp_support="true"
   data-auto_select="true"
 ></div>
-<div class="g_id_signin"></div>
+<div class="g_id_signin" id="google"></div>
+<p id="resultat"><p>
+  <button id=lgt onclick="logout()" hidden="hidden">Logout</button>
 <script>
   async function printResult(result) {
     console.log(result);
-
-
+    const el = document.getElementById('resultat');
+    el.textContent = result;
+    const bt = document.getElementById('google');
+    bt.hidden = true;
+    const lgt = document.getElementById('lgt');
+    lgt.hidden = false;
   }
 </script>
+  <script>
+    async function logout() {
+      const el = document.getElementById('resultat');
+      el.textContent = null;
+      el.hidden = true;
+      const bt = document.getElementById('google');
+      bt.hidden = false;
+      const lgt = document.getElementById('lgt');
+      lgt.hidden = true;
+      location.reload();
+    }
+  </script>
 <button id="nothing" onclick="handleCredentialResponse({credential: 'test'})">Nothing</button>
 <button id="something" onclick="printResult('test')">Something</button>
 
