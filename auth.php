@@ -27,13 +27,13 @@ if (!$payload) {
 }
 
 // Optionnel : vérification du domaine (décommenter si besoin)
-/*
+
 if (!isset($payload['hd']) || $payload['hd'] !== $domains) {
     http_response_code(403);
     echo json_encode(['error' => 'Access denied: Invalid domain']);
     exit;
 }
-*/
+
 
 // Assignation de la variable recherchée
 $targetEmail = trim($payload['email'] ?? '');
