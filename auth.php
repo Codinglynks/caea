@@ -18,7 +18,14 @@ if (!$id_token) {
 
 // Vérification du token Google
 $client = new Google_Client(['client_id' => $WEB_CLIENT_ID]);
-$payload = $client->verifyIdToken($id_token);
+try {
+    $payload = $client->verifyIdToken($id_token);
+} catch (Exception $e) {
+    error_log('Token verification failed: ' . $e->getMessage());
+    http_response_code(401);
+    echo json_encode(['error' => 'Invalid ID token']);
+    exit;
+}
 
 if (!$payload) {
     http_response_code(401);
