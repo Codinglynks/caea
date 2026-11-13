@@ -9,7 +9,7 @@ name: Deploy to InfinityFree
 
 on:
   push:
-    branches: [main]
+    branches: [dev]
   # Lets you re-run a deployment by hand from the Actions tab.
   workflow_dispatch:
 
