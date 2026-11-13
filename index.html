@@ -37,6 +37,8 @@
 
         if (!res.ok) {
           throw new Error(`Server error: ${res.status}`);
+          console.log(`Server error: ${res.status}`);
+
         }
 
         // Use res.text() if auth.php echoes plain text/HTML
