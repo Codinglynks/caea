@@ -46,7 +46,7 @@ if (!isset($payload['hd']) || $payload['hd'] !== $domains) {
 $targetEmail = trim($payload['email'] ?? '');
 
 // Ouverture du fichier CSV
-$handle = fopen("dataset.csv", "r");
+$handle = fopen("results.csv", "r");
 if (!$handle) {
     http_response_code(500);
     echo json_encode(['error' => 'Unable to open the database']);
@@ -54,8 +54,8 @@ if (!$handle) {
 }
 
 $headers = fgetcsv($handle, 1000, ',');
-$emailIndex = array_search('Email', $headers);
-$websiteIndex = array_search('Website', $headers);
+$emailIndex = array_search('Nom et prénom', $headers);
+$websiteIndex = array_search('Score', $headers);
 
 if ($emailIndex === false || $websiteIndex === false) {
     fclose($handle);
