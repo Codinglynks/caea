@@ -36,18 +36,18 @@
         });
 
         if (!res.ok) {
-          throw new Error(`Server error: ${res.status}`);
-          console.log(`Server error: ${res.status}`);
-
+          throw new Error(`${res.status}`);
         }
 
         // Use res.text() if auth.php echoes plain text/HTML
         const responseData = await res.text();
         console.log("Response from auth.php:", responseData);
-        await printResult(responseData);
+        await printResult("Vous avez eu " + responseData + "points", "green");
 
       } catch (error) {
         console.error("Fetch error:", error);
+        console.log("Erreur du serveur: ", error);
+        await printResult("Erreur du serveur: " + error, "red");
       }
     }
   </script>
@@ -75,10 +75,11 @@
 <p id="resultat"><p>
   <button id=lgt onclick="logout()" hidden="hidden">Logout</button>
 <script>
-  async function printResult(result) {
+  async function printResult(result,color) {
     console.log(result);
     const el = document.getElementById('resultat');
     el.textContent = result;
+    el.style.color = color;
     const bt = document.getElementById('google');
     bt.hidden = true;
     const lgt = document.getElementById('lgt');
