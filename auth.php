@@ -79,7 +79,7 @@ if ($website !== null) {
 } else {
     http_response_code(404);
     echo json_encode([
-        'error' => 'No website found for this email',
+        'error' => 'No data found for this email',
         'email' => $targetEmail
     ]);
 }
