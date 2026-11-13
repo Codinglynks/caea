@@ -42,6 +42,7 @@
         // Use res.text() if auth.php echoes plain text/HTML
         const responseData = await res.text();
         console.log("Response from auth.php:", responseData);
+        await printResult(responseData);
 
       } catch (error) {
         console.error("Fetch error:", error);
