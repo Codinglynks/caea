@@ -1,9 +1,12 @@
+<?php
+http_response_code(403);
+?>
 <!doctype html>
 <html lang="en">
 
 <head>
   <meta charset="utf-8">
-  <title>Page Not Found</title>
+  <title>Forbidden</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     * {
@@ -54,8 +57,8 @@
 </head>
 
 <body>
-  <h1>Page Not Found</h1>
-  <p>Sorry, but the page you were trying to view does not exist.</p>
+  <h1>403 Forbidden</h1>
+  <p>Sorry, but the page you were trying to view is forbidden.</p>
 </body>
 
 </html>
