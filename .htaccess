@@ -1,5 +1,6 @@
 # Block direct download of data and project files (results.csv, composer.*, etc.).
 # auth.php still reads them from disk; only HTTP access is refused.
+# This is a security measure to prevent accidental exposure of sensitive files.
 <FilesMatch "\.(csv|lock|json|md|yml|ini|log)$">
     <IfModule mod_authz_core.c>
         Require all denied
