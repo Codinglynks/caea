@@ -39,7 +39,7 @@ jobs:
         # Let the retry step below take over if the connection drops.
         continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with: &ftp
+        with: &ftps
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
