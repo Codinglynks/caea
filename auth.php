@@ -46,7 +46,7 @@ if (!isset($payload['hd']) || $payload['hd'] !== $domains) {
 $targetEmail = trim($payload['email'] ?? '');
 
 // Ouverture du fichier CSV
-$handle = fopen("dataset.csv", "r");
+$handle = fopen("results.csv", "r");
 if (!$handle) {
     http_response_code(500);
     echo json_encode(['error' => 'Unable to open the database']);
@@ -54,8 +54,8 @@ if (!$handle) {
 }
 
 $headers = fgetcsv($handle, 1000, ',');
-$emailIndex = array_search('Email', $headers);
-$websiteIndex = array_search('Website', $headers);
+$emailIndex = array_search('Nom et prénom', $headers);
+$websiteIndex = array_search('Score', $headers);
 
 if ($emailIndex === false || $websiteIndex === false) {
     fclose($handle);
@@ -64,12 +64,12 @@ if ($emailIndex === false || $websiteIndex === false) {
     exit;
 }
 
-$website = null;
+$points = null;
 
 // Parcours du fichier CSV
 while (($data = fgetcsv($handle, 1000, ',')) !== false) {
     if (isset($data[$emailIndex]) && trim($data[$emailIndex]) === $targetEmail) {
-        $website = $data[$websiteIndex] ?? 'Non renseigné';
+        $points = $data[$websiteIndex] ?? 'Non renseigné';
         break;
     }
 }
@@ -77,11 +77,11 @@ while (($data = fgetcsv($handle, 1000, ',')) !== false) {
 fclose($handle);
 
 // Envoi de la réponse JSON finale
-if ($website !== null) {
+if ($points !== null) {
     echo json_encode([
         'status' => 'success',
         'email' => $targetEmail,
-        'website' => $website
+        'points' => $points
     ]);
 } else {
     http_response_code(404);

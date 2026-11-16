@@ -36,16 +36,19 @@
         });
 
         if (!res.ok) {
-          throw new Error(`Server error: ${res.status}`);
+          throw new Error(`${res.status}`);
         }
 
         // Use res.text() if auth.php echoes plain text/HTML
         const responseData = await res.text();
         console.log("Response from auth.php:", responseData);
-        await printResult(responseData);
+        const jsonResponse = JSON.parse(responseData);
+        await printResult("Vous avez eu " + jsonResponse.points + " points", "green");
 
       } catch (error) {
         console.error("Fetch error:", error);
+        console.log("Erreur du serveur: ", error);
+        await printResult("Erreur du serveur: " + error, "red");
       }
     }
   </script>
@@ -70,13 +73,14 @@
   data-auto_select="true"
 ></div>
 <div class="g_id_signin" id="google"></div>
-<p id="resultat"><p>
+<p id="resultat"></p>
   <button id=lgt onclick="logout()" hidden="hidden">Logout</button>
 <script>
-  async function printResult(result) {
+  async function printResult(result,color) {
     console.log(result);
     const el = document.getElementById('resultat');
     el.textContent = result;
+    el.style.color = color;
     const bt = document.getElementById('google');
     bt.hidden = true;
     const lgt = document.getElementById('lgt');
@@ -95,8 +99,8 @@
       location.reload();
     }
   </script>
-<button id="nothing" onclick="handleCredentialResponse({credential: 'test'})">Nothing</button>
-<button id="something" onclick="printResult('test')">Something</button>
+<button id="nothing" onclick="handleCredentialResponse({credential: 'test'})">handleCredentialResponse</button>
+<button id="something" onclick="printResult('test')">printResult</button>
 
 
 </body>
