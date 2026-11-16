@@ -9,7 +9,6 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main]
   workflow_dispatch:
 
 # A new push to a PR cancels the older, still-running check for that PR.
