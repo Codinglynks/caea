@@ -64,12 +64,12 @@ if ($emailIndex === false || $websiteIndex === false) {
     exit;
 }
 
-$website = null;
+$points = null;
 
 // Parcours du fichier CSV
 while (($data = fgetcsv($handle, 1000, ',')) !== false) {
     if (isset($data[$emailIndex]) && trim($data[$emailIndex]) === $targetEmail) {
-        $website = $data[$websiteIndex] ?? 'Non renseigné';
+        $points = $data[$websiteIndex] ?? 'Non renseigné';
         break;
     }
 }
@@ -77,11 +77,11 @@ while (($data = fgetcsv($handle, 1000, ',')) !== false) {
 fclose($handle);
 
 // Envoi de la réponse JSON finale
-if ($website !== null) {
+if ($points !== null) {
     echo json_encode([
         'status' => 'success',
         'email' => $targetEmail,
-        'website' => $website
+        'points' => $points
     ]);
 } else {
     http_response_code(404);
