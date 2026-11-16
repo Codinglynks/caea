@@ -6,7 +6,7 @@ http_response_code(403);
 
 <head>
   <meta charset="utf-8">
-  <title>Forbidden</title>
+  <title>403 Forbidden</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     * {
