@@ -7,3 +7,7 @@ dist
 /.idea/
 .env
 /vendor/
+
+# Real student data must never be committed
+*.csv
+!*.example.csv

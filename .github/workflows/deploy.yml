@@ -52,6 +52,8 @@ jobs:
           log-level: standard
           exclude: |
             **/.git*
+            # Student data is uploaded by hand; never sync or delete it from the server.
+            **/*.csv
             **/.git*/**
             **/.github/**
             **/node_modules/**
