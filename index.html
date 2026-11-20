@@ -97,6 +97,7 @@
       const lgt = document.getElementById('lgt');
       lgt.hidden = true;
       location.reload();
+      navigator.credentials.preventSilentAccess();
     }
   </script>
 <button id="nothing" onclick="handleCredentialResponse({credential: 'test'})">handleCredentialResponse</button>
