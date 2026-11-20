@@ -4,7 +4,7 @@ require 'vendor/autoload.php';
 header('Content-Type: application/json');
 
 $WEB_CLIENT_ID = '196751137283-vg0urefv51ntaokjckck5qjki6lk966d.apps.googleusercontent.com';
-$domains = "ecole-alsacienne.org";
+$domains = "eleves-alsacienne.org";
 
 // Récupération du token
 $input = json_decode(file_get_contents('php://input'), true);
