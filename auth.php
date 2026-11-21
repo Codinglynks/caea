@@ -39,6 +39,13 @@ if (!isset($payload['hd']) || $payload['hd'] !== $domains) {
     exit;
 }
 
+// L'email sert de clé de recherche : refuser s'il n'est pas vérifié par Google.
+if (empty($payload['email_verified'])) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Access denied: Email not verified']);
+    exit;
+}
+
 
 // Assignation de la variable recherchée
 $targetEmail = trim($payload['email'] ?? '');
