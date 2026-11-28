@@ -81,8 +81,139 @@ textarea {
 }
 
 /* ==========================================================================
-   Author's custom styles
+   Author's custom styles — thème « Concours Alsacien » (rouge & blanc)
    ========================================================================== */
+
+:root {
+  --rouge: #ed1d29;
+  --rouge-fonce: #c8141f;
+  --blanc: #fff;
+  --blanc-doux: rgba(255, 255, 255, 0.85);
+  --trait: 2px;
+  --police: "Barlow", "DIN Next Rounded", "DIN Round", system-ui, sans-serif;
+}
+
+::-moz-selection {
+  background: var(--blanc);
+  color: var(--rouge);
+}
+
+::selection {
+  background: var(--blanc);
+  color: var(--rouge);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  background: var(--rouge);
+  color: var(--blanc);
+  font-family: var(--police);
+  font-weight: 400;
+  text-align: center;
+}
+
+/* Titre : majuscules espacées, comme le texte circulaire du logo */
+h1 {
+  margin: 0;
+  max-width: 22ch;
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  line-height: 1.4;
+}
+
+/* Fin trait blanc sous le titre */
+h1::after {
+  content: "";
+  display: block;
+  width: 3rem;
+  height: var(--trait);
+  margin: 1.25rem auto 0;
+  background: var(--blanc);
+}
+
+/* Logo du concours : fond rouge identique à la page, il se fond dedans */
+.logo {
+  display: block;
+  width: min(280px, 70vw);
+  height: auto;
+}
+
+/* Bouton Google centré */
+.g_id_signin {
+  display: flex;
+  justify-content: center;
+  min-height: 44px;
+}
+
+/* Résultat : carte blanche pour garder lisibles les couleurs injectées en JS */
+#resultat {
+  margin: 0;
+  padding: 1rem 2rem;
+  background: var(--blanc);
+  border-radius: 999px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+#resultat:empty {
+  display: none;
+}
+
+/* Boutons : contour blanc, minimaliste */
+button {
+  appearance: none;
+  padding: 0.7rem 2rem;
+  border: var(--trait) solid var(--blanc);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--blanc);
+  font: inherit;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+button:hover,
+button:focus-visible {
+  background: var(--blanc);
+  color: var(--rouge);
+}
+
+button:focus-visible {
+  outline: var(--trait) solid var(--blanc);
+  outline-offset: 4px;
+}
+
+a {
+  color: var(--blanc);
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  color: var(--blanc-doux);
+}
+
+hr {
+  border-top-color: var(--blanc-doux);
+}
 
 /* ==========================================================================
    Helper classes

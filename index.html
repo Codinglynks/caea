@@ -5,9 +5,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CAEA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&display=swap">
   <link rel="stylesheet" href="css/style.css">
   <meta name="description" content="">
-
   <meta property="og:title" content="">
   <meta property="og:type" content="">
   <meta property="og:url" content="">
@@ -19,7 +21,7 @@
   <link rel="apple-touch-icon" href="icon.png">
 
   <link rel="manifest" href="site.webmanifest">
-  <meta name="theme-color" content="#fafafa">
+  <meta name="theme-color" content="#ed1d29">
   <script src="https://accounts.google.com/gsi/client" async></script>
   <script>
     async function handleCredentialResponse(response) {
@@ -59,7 +61,7 @@
 
 <!-- Add your site or application content here -->
 <h1>Ceci est le site web du CAEA !!</h1>
-<img src="img/logo_ea.png" alt="Logo de l'école alsacienne" width="200">
+<img class="logo" src="img/logo_concours.jpg" alt="Concours Alsacien – 2ème édition 2027" width="280">
 <script src="js/app.js"></script>
 <div
   id="g_id_onload"
@@ -67,12 +69,15 @@
   data-callback="handleCredentialResponse"
   data-client_id="196751137283-vg0urefv51ntaokjckck5qjki6lk966d.apps.googleusercontent.com"
   data-use_fedcm_for_button="true"
-
+  data-hd="eleves-alsacienne.org"
   data-button_auto_select="true"
   data-itp_support="true"
   data-auto_select="true"
 ></div>
-<div class="g_id_signin" id="google"></div>
+ <div id="google" class="g_id_signin"
+      data-shape="pill"
+      >
+  </div>
 <p id="resultat"></p>
   <button id=lgt onclick="logout()" hidden="hidden">Logout</button>
 <script>
@@ -97,11 +102,9 @@
       const lgt = document.getElementById('lgt');
       lgt.hidden = true;
       location.reload();
+      navigator.credentials.preventSilentAccess();
     }
   </script>
-<button id="nothing" onclick="handleCredentialResponse({credential: 'test'})">handleCredentialResponse</button>
-<button id="something" onclick="printResult('test')">printResult</button>
-
 
 </body>
 

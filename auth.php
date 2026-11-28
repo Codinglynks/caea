@@ -4,7 +4,7 @@ require 'vendor/autoload.php';
 header('Content-Type: application/json');
 
 $WEB_CLIENT_ID = '196751137283-vg0urefv51ntaokjckck5qjki6lk966d.apps.googleusercontent.com';
-$domains = "ecole-alsacienne.org";
+$domains = "eleves-alsacienne.org";
 
 // Récupération du token
 $input = json_decode(file_get_contents('php://input'), true);
@@ -29,15 +29,20 @@ try {
 
 if (!$payload) {
     http_response_code(401);
-    echo json_encode(['error' => 'Invalid ID token']);
+    echo json_encode(['error' => 'No payload found in ID token']);
     exit;
 }
-
-// Optionnel : vérification du domaine (décommenter si besoin)
 
 if (!isset($payload['hd']) || $payload['hd'] !== $domains) {
     http_response_code(403);
     echo json_encode(['error' => 'Access denied: Invalid domain']);
+    exit;
+}
+
+// L'email sert de clé de recherche : refuser s'il n'est pas vérifié par Google.
+if (empty($payload['email_verified'])) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Access denied: Email not verified']);
     exit;
 }
 
@@ -56,8 +61,9 @@ if (!$handle) {
 $headers = fgetcsv($handle, 1000, ',');
 $emailIndex = array_search('Nom et prénom', $headers);
 $websiteIndex = array_search('Score', $headers);
+$fluidIndex = array_search('Fluidité', $headers);
 
-if ($emailIndex === false || $websiteIndex === false) {
+if ($emailIndex === false || $websiteIndex === false || $fluidIndex === false) {
     fclose($handle);
     http_response_code(500);
     echo json_encode(['error' => 'Required columns not found in CSV']);
@@ -65,11 +71,13 @@ if ($emailIndex === false || $websiteIndex === false) {
 }
 
 $points = null;
+$fluid = null;
 
 // Parcours du fichier CSV
-while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+while (($data = fgetcsv($handle, 1000)) !== false) {
     if (isset($data[$emailIndex]) && trim($data[$emailIndex]) === $targetEmail) {
-        $points = $data[$websiteIndex] ?? 'Non renseigné';
+        $points = $data[$websiteIndex] ?? null;
+        $fluid = $data[$fluidIndex] ?? null ;
         break;
     }
 }
@@ -81,7 +89,8 @@ if ($points !== null) {
     echo json_encode([
         'status' => 'success',
         'email' => $targetEmail,
-        'points' => $points
+        'points' => $points,
+        'fluid' => $fluid
     ]);
 } else {
     http_response_code(404);
